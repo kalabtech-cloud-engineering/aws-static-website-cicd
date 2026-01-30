@@ -4,7 +4,7 @@ DOCS_DIR    = ./docs/obsidian
 MOD_DIR     = ./modules
 STATE_FILE  = dev.tfplan
 
-.PHONY: all verify-identity init plan apply destroy fmt validate check security prec prec-all docs help
+.PHONY: all verify-identity init plan apply destroy state checkfiles check security prec prec-all docs help
 
 # Default action
 all: security fmt check plan
@@ -36,15 +36,19 @@ destroy: ## Destroy infrastructure
 	@echo "WARNING: You are about to destroy all infrastructure."
 	@cd $(TF_DIR) && terraform destroy
 
+state: ## Shows tfstate
+	@echo "Current AWS Identity:"
+	@AWS_PAGER="" aws sts get-caller-identity --query "Arn" --output text
+	@cd $(TF_DIR) && terraform state pull
+
+
 ## --- QUALITY AND SECURITY ---
 
-fmt: ## Format Terraform code
+checkfiles: ## Format and Validation Terraform code
 	@echo "Formatting code..."
 	@terraform fmt -recursive $(MOD_DIR)
 	@terraform fmt -recursive $(TF_DIR)
-
-validate: ## Validation Terraform code
-	@echo "Formatting code..."
+	@echo "Validating code..."
 	@cd $(TF_DIR) && terraform validate
 	@cd $(TF_DIR) && terraform validate
 
