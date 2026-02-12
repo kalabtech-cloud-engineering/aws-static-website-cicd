@@ -27,7 +27,7 @@ plan: ## Generate execution plan
 apply: ## Apply changes
 	@echo "Applying changes..."
 	@AWS_PAGER="" aws sts get-caller-identity --query "Arn" --output text
-	@echo "Destroying infrastructure..."
+	@echo "Generating terraform apply..."
 	@cd $(TF_DIR) && terraform apply $(STATE_FILE)
 
 destroy: ## Destroy infrastructure

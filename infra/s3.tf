@@ -20,18 +20,32 @@ data "aws_iam_policy_document" "static-policy" {
       values   = ["false"]
     }
   }
+  # NOTE: Cloudfront Policy
+  statement {
+    sid    = "AllowCloudfrontServicePrincipal"
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["cloudfront.amazonaws.com"]
+    }
+    actions   = ["s3:GetObject"]
+    resources = ["${aws_s3_bucket.static-s3.arn}/*"]
+    condition {
+      test     = "StringEquals"
+      variable = "AWS:SourceArn"
+      values   = [aws_cloudfront_distribution.static-distribution.arn]
+    }
+  }
+
 }
 
 ## S3 - bucket
 resource "aws_s3_bucket" "static-s3" {
-  bucket = "kalabtech-static-website"
+  bucket = "kalabtech-static-website-cicd"
 
-  tags = merge(
-    local.common_tags,
-    {
-      Name = "static-website"
-    }
-  )
+  tags = {
+    Name = "static-website"
+  }
 }
 
 resource "aws_s3_bucket_public_access_block" "static-block" {
