@@ -16,7 +16,7 @@ data "aws_iam_policy_document" "oidc_assume_role" {
     condition {
       test     = "StringEquals"
       variable = "token.actions.githubusercontent.com:sub"
-      values   = ["repo:kalabtech/aws-static-website-cicd:ref:refs/heads/main"]
+      values   = ["repo:kalabtech/aws-static-website-cicd:*"]
     }
     condition {
       test     = "StringEquals"
